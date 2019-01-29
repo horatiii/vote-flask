@@ -22,7 +22,9 @@ Voting system built in python3 with use of sqlite3 and flask.
 	password: admin
 
 
+
 db schema:
 candidates(name text primary key)
+
 electors(id integer primary key, secret_key text, vote text, date_of_vote text,
 				 foreign key(vote) references candidates(name)); 
