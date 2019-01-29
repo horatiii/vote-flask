@@ -1,0 +1,44 @@
+<!doctype html>
+	<!--<script>-->
+		<!--var a = 500-->
+		
+
+	<!--</script>-->
+
+<html>
+	<head>results:</head>
+	<body> 
+		<style>
+label {
+	display: inline-block;
+	width: 140px;
+	text-align: right;
+} 
+		</style>
+
+		{% for x in fetched %}
+			<br>
+			<!--<div style="width:500px;height:100px;border:1px solid #000; display: inline-block;">{{x[0]}}</div>-->
+			<!--<div style="width:500px;height:100px;border:1px solid #000;">{{x[0]}}</div>-->
+			<div style="width:'{{s}}'px;height:100px;border:1px solid #000;">{{x[0]}}    {{x[1]}}</div>
+		{% endfor %}
+
+		{% if fetched != None %}
+		<div>
+			yeah, show data
+		</div>
+		{%else%}
+		<div>
+			no data to show
+		</div>
+		{%endif%}
+
+
+		
+
+
+		
+
+
+	</body>
+</html>

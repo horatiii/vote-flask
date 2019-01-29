@@ -1,0 +1,14 @@
+
+body {
+	background-color: lightblue;
+}
+
+.logout_button {
+	color: red;
+	font-weight: bold;
+}
+
+#sth {
+	color: red;
+	font-weight: bold;
+}

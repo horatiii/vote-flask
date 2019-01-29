@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+
+		<style>
+		.logout_button {
+			color: gray;
+			font-weight: bold;
+		}
+		</style>
+		<title>{{ title }}</title>
+		<script src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js'></script>
+	</head>
+
+	<a class='logout_button' id="sth" href="/logout">Logout</a>
+	<body>
+		<center>
+			<h1>{{ title }}</h1>
+		</center>
+		<center>
+			<!--javascript/html solution is derived from-->
+			<!--https://blog.ruanbekker.com/blog/2017/12/14/graphing-pretty-charts-with-python-flask-and-chartjs/-->
+			<canvas id="chart" width="600" height="400"></canvas>
+			<script>
+				// bar chart data
+				var barData = {
+					labels : [
+						{% for item in labels %}
+						"{{ item }}",
+						{% endfor %}
+					],
+					datasets : [{
+						fillColor: "rgba(151,187,205,0.2)",
+						strokeColor: "rgba(151,187,205,1)",
+						pointColor: "rgba(151,187,205,1)",
+						data : [
+							{% for item in values %}
+							"{{ item }}",
+							{% endfor %}
+						]
+					}
+					]
+				}
+			// get bar chart canvas
+			var mychart = document.getElementById("chart").getContext("2d");
+			steps = {{maximum}}
+			max = {{maximum}}
+			// draw bar chart
+			new Chart(mychart).Bar(barData, {
+				scaleOverride: true,
+				scaleSteps: steps,
+				scaleStepWidth: Math.ceil(max / steps),
+				scaleStartValue: 0,
+				scaleShowVerticalLines: true,
+				scaleShowGridLines : true,
+				barShowStroke : true,
+				scaleShowLabels: true
+			}
+			);
+			</script>
+		</center>
+	</body>
+</html>
