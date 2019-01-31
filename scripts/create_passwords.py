@@ -1,55 +1,54 @@
+"""
+for db relation and data generation
+"""
 import sqlite3
 import uuid
 
-db = sqlite3.connect('../db/election_db')
-cursor = db.cursor()
+DB = sqlite3.connect('../db/election_db')
+CURSOR = DB.cursor()
 
 #candidates
-cursor.execute('''  
+CURSOR.execute('''
         drop table if exists candidates
-        ''') 
-cursor.execute('''create table candidates(name text primary key)''')
+        ''')
+CURSOR.execute('''create table candidates(name text primary key)''')
 print('loading candidates:')
 
 with open('../data/candidates') as fp:
     for i in fp.readlines():
-        cursor.execute('''insert into candidates values(?)''',(str(i).strip('\n'),))
+        CURSOR.execute('''insert into candidates values(?)''', (str(i).strip('\n'),))
 
-db.commit()
+DB.commit()
 
-cursor.execute('''select * from candidates''')
-all_rows = cursor.fetchall()
-for row in all_rows:
+CURSOR.execute('''select * from candidates''')
+ROWS = CURSOR.fetchall()
+for row in ROWS:
     print(row)
 #create table
-cursor.execute('''  
+CURSOR.execute('''
         drop table if exists electors
-        ''') 
-cursor.execute('''
+        ''')
+CURSOR.execute('''
         create table if not exists electors(id integer primary key, secret_key text, vote text, date_of_vote text,
         foreign key(vote) references candidates(name))
         ''')
 
 with open('../data/electors') as fp:
     for i in fp.readlines():
+        CURSOR.execute(''' insert or replace into electors(id, secret_key) values(?,?) ''', \
+                       (i, str(uuid.uuid4())[:8]))
 
-        cursor.execute('''
-                insert or replace into electors(id, secret_key) values(?,?)
-                ''',(i,str(uuid.uuid4())[:8]))
-db.commit()
+DB.commit()
 
 
 
 print('electors loaded:')
 
-cursor.execute('select * from electors')
+CURSOR.execute('select * from electors')
 
-all_rows = cursor.fetchall()
+ROWS = CURSOR.fetchall()
 
-for row in all_rows:
+for row in ROWS:
     print(row)
 
-
-
-db.close()
-
+DB.close()

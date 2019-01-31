@@ -1,23 +1,39 @@
-from flask import Flask, render_template, request, url_for
-import flask
-import sqlite3
-from sqltools import *
+""" Main script with flask initialization """
+from flask import Flask, \
+                  request, \
+                  redirect, \
+                  url_for, \
+                  render_template
 
-import flask_login
+from flask_login import login_user, \
+                        logout_user, \
+                        login_required, \
+                        LoginManager, \
+                        UserMixin
+
+from sqltools import get_bar_values, \
+                     get_candidates, \
+                     credentials_valid, \
+                     can_vote, \
+                     candidate_valid, \
+                     make_vote
 
 app = Flask(__name__)
-login_manager = flask_login.LoginManager()
-login_manager.init_app(app)
+LOGIN_MANAGER = LoginManager()
+LOGIN_MANAGER.init_app(app)
+
+USERS = {'admin': {'password': 'admin'}}
 
 
-users = {'admin': {'password': 'admin'}}
-class User(flask_login.UserMixin):
+""" user Class """
+class User(UserMixin):
     pass
 
 
-@login_manager.user_loader
+# """ user loader """
+@LOGIN_MANAGER.user_loader
 def user_loader(email):
-    if email not in users:
+    if email not in USERS:
         return
 
     user = User()
@@ -25,77 +41,81 @@ def user_loader(email):
     return user
 
 
-@login_manager.request_loader
+""" request loader """
+@LOGIN_MANAGER.request_loader
 def request_loader(request):
     email = request.form.get('email')
-    if email not in users:
+    if email not in USERS:
         return
 
     user = User()
     user.id = email
-
-    user.is_authenticated = request.form['password'] == users[email]['password']
-
+    user.is_authenticated = request.form['password'] == USERS[email]['password']
     return user
 
+
+""" route /login """
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    if flask.request.method == 'GET':
+    if request.method == 'GET':
         return render_template('login.html')
 
-    email = flask.request.form['email']
-    if flask.request.form['password'] == users[email]['password']:
+    email = request.form['email']
+    if request.form['password'] == USERS[email]['password']:
         user = User()
         user.id = email
-        flask_login.login_user(user)
-        return flask.redirect(flask.url_for('bar'))
+        login_user(user)
+        return redirect(url_for('hidden'))
 
     return 'Bad login'
 
 
+""" route /logout """
 @app.route('/logout')
 def logout():
-    flask_login.logout_user()
+    logout_user()
     return render_template('logout.html')
 
-@login_manager.unauthorized_handler
+"""
+unauthorized handler
+"""
+@LOGIN_MANAGER.unauthorized_handler
 def unauthorized_handler():
-    return flask.redirect(flask.url_for('login')) 
+    return redirect(url_for('login'))
 
-
-@app.route('/',methods=['GET','POST'])
+""" route / """
+@app.route('/', methods=['GET', 'POST'])
 def home():
     if request.method == "POST":
         elector_id = request.form["elector"]
         secret_key = request.form['secret_key']
         option = request.form['options']
-        print(elector_id, secret_key, option)
-        print('credentials valid:',credentials_valid(elector_id,secret_key))
-        print('data valid:',candidate_valid(option))
         if credentials_valid(elector_id, secret_key) and candidate_valid(option):
 
-            if(can_vote(elector_id, secret_key)):
-                if(make_vote(option, elector_id)): return render_template('success.html')
+            if can_vote(elector_id, secret_key):
+                if make_vote(option, elector_id): return render_template('success.html')
                 else: return 'db connection error'
-            else: return 'error: voted before' 
+            else: return 'error: voted before'
 
         else: return render_template('data_not_valid.html')
 
-
-
-    elif request.method == 'GET':
-        candidates=get_candidates()
-
-        return render_template('home.html',candidates=candidates) 
+    if request.method == 'GET':
+        candidates = get_candidates() 
+        return render_template('home.html', candidates=candidates)
 
     else: return 'wrong query'
 
-@app.route('/bar')
-@flask_login.login_required
-def bar(): 
-    labels, values = get_bar_values() 
-    m = max(values) + 1 
-    return render_template('bar.html', title='Voting results', maximum=m, labels=labels, values=values)
+""" route /hidden """
+@app.route('/hidden')
+@login_required
+def hidden():
+    labels, values = get_bar_values()
+    maximum = max(values) + 1
+    return render_template('bar.html',
+                           title='Voting results',
+                           maximum=maximum,
+                           labels=labels,
+                           values=values)
 
 
 

@@ -1,22 +1,27 @@
+"""
+shows general db scheme
+"""
 import sqlite3
 
-db = sqlite3.connect('../db/election_db')
+DB = sqlite3.connect('../db/election_db')
 
-cursor = db.cursor()
+CURSOR = DB.cursor()
 
-cursor.execute('select * from electors')
+CURSOR.execute('select * from electors')
 
-rows = cursor.fetchall()
+ROWS = CURSOR.fetchall()
 
 print('electors')
-for row in rows:
+for row in ROWS:
     print(row)
 
 print()
-cursor.execute('select * from candidates')
-rows = cursor.fetchall()
+CURSOR.execute('select * from candidates')
+ROWS = CURSOR.fetchall()
 
 
 print('candidates')
-for row in rows:
-    print(row) 
+for row in ROWS:
+    print(row)
+
+DB.close()
