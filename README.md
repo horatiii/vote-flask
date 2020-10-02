@@ -1,33 +1,38 @@
-Voting system built in python3 with use of sqlite3 and flask. <br/>
+# Voting system built in python3 with use of sqlite3 and flask. <br/>
 
+![Alt text](img/make_vote.png?raw=true "make vote")
 
-1)install requirements(i.e with pip) <br/>
-	pip3 install sqlite3 <br/>
-	pip3 install flask <br/>
-
-2)generate db file from script in scripts directory<br/>
-	python3 create_passwords.py<br/>
-
-3)app is ready to run: <br/>
-	python3 app.py<br/>
-
-4)run show_schema.py to read electors and corresponding secret keys<br/>
-	python3 show_schema.py <br/>
-
-5)open browser -> localhost:5000<br/>
-	insert one of available elector_id and corresponding secre key <br/>
-	and choose candidate<br/>
-
-6)admin view is accessible over localhost:5000/bar<br/>
-	user: admin<br/>
-	password: admin<br/>
-
+![Alt text](img/login.png?raw=true "login")
+![Alt text](img/results.png?raw=true "results")
+1. install requirements(i.e with pip)
+	-	`pip install flask flask_login` 
 <br/><br/>
 
-db schema:<br/>
+2. generate db file from script in scripts directory
+	-  `python3 create_passwords.py`
+<br/><br/>
 
-candidates(name text primary key)<br/>
-<br/>
+3. app is ready to run:
+	- `python3 app.py`
+<br/><br/>
 
-electors(id integer primary key, secret_key text, vote text, date_of_vote text,<br/>
-				 foreign key(vote) references candidates(name)); <br/>
+4. run show_scheme.py to read electors id and corresponding secret keys
+	-  `python3 show_schema.py`
+<br/><br/>
+
+5. open browser -> localhost:5000
+	-  insert one of available elector_id and corresponding secret key
+  and choose candidate (A, B or C)
+<br/><br/>
+
+6. admin view is accessible over localhost:5000/login
+	- user: admin
+	- password: admin
+<br/><br/>
+<br/><br/>
+
+
+db schema:
+ candidates(name text primary key)
+ electors(id integer primary key, secret_key text, vote text, date_of_vote text,
+				 foreign key(vote) references candidates(name));
