@@ -3,6 +3,7 @@
 ![Alt text](img/make_vote.png?raw=true "make vote")
 
 ![Alt text](img/login.png?raw=true "login")
+
 ![Alt text](img/results.png?raw=true "results")
 1. install requirements(i.e with pip)
 	-	`pip install flask flask_login` 
